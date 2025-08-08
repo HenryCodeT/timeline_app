@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Airtable Timeline Assignment — Documentation
 
-## Getting Started
+**Project:** Interactive Timeline Visualization (Next.js + TypeScript)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Overview
+
+Interactive timeline built with **Next.js** and **TypeScript**, showing items in compact lanes. Features include zoom, priority filtering, playback, analytics, inline editing, drag/drop, and responsive design (desktop lanes + mobile table view).
+
+---
+
+## Technologies
+
+* Next.js, TypeScript, Tailwind CSS
+* ESLint, date-fns, clsx, lucide-react
+
+---
+
+## Structure
+
+```
+src/
+├─ components/   # UI
+├─ hooks/        # Custom logic
+├─ utils/        # Helpers
+├─ interfaces/   # Types
+├─ app/        # Next.js pages
+├─ data/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Main Component — `page.tsx`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Hooks:**
 
-## Learn More
+  * `useTimelineData` — Data & filtering
+  * `useTimelineLayout` — Lanes & positions
+  * `useTimelinePlayback` — Animation
+  * `useTimelineInteractions` — User actions
+* **Controls:** Zoom slider, priority filter, playback button, analytics toggle
+* **Views:**
 
-To learn more about Next.js, take a look at the following resources:
+  * Desktop: Lane-based timeline with tooltips & labels
+  * Mobile: Editable task table
+* **Extras:** Stats via `calculateStats`, hover tooltips, inline editing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Run
 
-## Deploy on Vercel
+```bash
+git clone <repo>
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Visit `http://localhost:3000`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Design Choices
+
+* Clear separation of logic/UI
+* Strong typing with TypeScript
+* Responsive layout
+* Isolated lane calculation for easy testing
+
+---
+
+## Improvements
+
+* Atomic design structure
+* More tests (unit, integration, E2E)
+* Accessibility and performance optimizations
+* Dynamic label sizing
+
+---
+
+## Future Enhancements
+
+* Export to image/PDF
+* Sub-day time granularity
+* Advanced animations
+* Theming
+* Live collaboration
+
+---
+
+## Conclusion
+
+`page.tsx` coordinates hooks, controls, and views for a clean, interactive, and extensible timeline.
