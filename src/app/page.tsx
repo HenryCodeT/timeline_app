@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, FC, useRef, useMemo } from 'react';
 import { ZoomIn, Play, Pause, BarChart3, Clock } from 'lucide-react';
@@ -12,11 +12,16 @@ import { useTimelinePlayback } from '@/hooks/useTimelinePlayback';
 import { useTimelineInteractions } from '@/hooks/useTimelineInteractions';
 
 const Home: FC = () => {
-  const timelineRef = useRef<HTMLDivElement>(null);
+  // useRef is used to get a reference to a DOM element, in this case, the timeline container.
+  const timelineRef= useRef<HTMLDivElement>(null);
+  // dayWidth defines the visual width of a single day on the timeline.
   const dayWidth: number = 40;
+  // useState hooks to manage the zoom level and the visibility of the stats panel.
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [showStats, setShowStats] = useState<boolean>(false);
 
+  // Custom hooks encapsulate logic for different parts of the component.
+  // useTimelineData handles all the timeline's data management.
   const {
     items,
     setItems,
@@ -28,6 +33,7 @@ const Home: FC = () => {
     totalDays,
   } = useTimelineData();
 
+  // useTimelineLayout calculates the visual layout, like lane assignments and date labels.
   const {
     lanes,
     dateLabels,
@@ -40,12 +46,14 @@ const Home: FC = () => {
     dayWidth
   });
 
+  // useTimelinePlayback manages the animation and state for the timeline's playback feature.
   const {
     isPlaying,
     currentDay,
     togglePlayback,
   } = useTimelinePlayback(totalDays);
 
+  // useTimelineInteractions centralizes all user interaction logic (drag, drop, hover, edit).
   const {
     editingItemId,
     setEditingItemId,
@@ -64,13 +72,17 @@ const Home: FC = () => {
     dayWidth
   });
 
-  // Cálculos de estadísticas y lista ordenada
+  // useMemo is used to memoize expensive calculations.
+  // This memoizes the statistics calculation, so it only re-runs when `filteredItems` changes.
   const stats = useMemo(() => calculateStats(filteredItems), [filteredItems]);
+  // This memoizes a sorted version of the items, preventing re-sorting on every render.
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }, [items]);
 
+  // JSX for the component's UI.
   return (
+    // Main container with Tailwind CSS classes for styling.
     <main className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-gray-200 p-4 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
@@ -85,12 +97,14 @@ const Home: FC = () => {
 
         {/* App Controls */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Zoom Control Section */}
           <div className="bg-slate-800 p-4 rounded-xl shadow-md border border-slate-700 hidden md:block">
             <div className="flex items-center gap-2 mb-2">
               <ZoomIn className="w-4 h-4 text-cyan-400" />
               <span className="font-semibold text-gray-200">Zoom Level</span>
             </div>
             <div className="flex items-center gap-2">
+              {/* Range input for controlling the zoom level */}
               <input
                 type="range"
                 min="0.5"
@@ -106,11 +120,13 @@ const Home: FC = () => {
             </div>
           </div>
 
+          {/* Priority Filter Control Section */}
           <div className="bg-slate-800 p-4 rounded-xl shadow-md border border-slate-700 hidden md:block">
             <div className="flex items-center gap-2 mb-2">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
               <span className="font-semibold text-gray-200">Priority Filter</span>
             </div>
+            {/* Select dropdown for filtering items by priority. */}
             <select
               value={selectedPriority}
               onChange={(e) => setSelectedPriority(e.target.value as 'all' | 'high' | 'medium' | 'low')}
@@ -123,12 +139,14 @@ const Home: FC = () => {
             </select>
           </div>
 
+          {/* Timeline Playback Control Section */}
           <div className="bg-slate-800 p-4 rounded-xl shadow-md border border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-4 h-4 text-fuchsia-400" />
               <span className="font-semibold text-gray-200">Timeline Playback</span>
             </div>
             <div className="flex items-center gap-2">
+              {/* Button to toggle playback (play/pause). */}
               <button
                 onClick={togglePlayback}
                 className="flex items-center gap-1 px-3 py-1 bg-fuchsia-900/40 hover:bg-fuchsia-800/60 text-fuchsia-300 rounded-lg transition-colors"
@@ -139,11 +157,13 @@ const Home: FC = () => {
             </div>
           </div>
 
+          {/* Analytics/Stats Button Section */}
           <div className="bg-slate-800 p-4 rounded-xl shadow-md border border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <BarChart3 className="w-4 h-4 text-amber-400" />
               <span className="font-semibold text-gray-200">Analytics</span>
             </div>
+            {/* Button to toggle the visibility of the stats panel. */}
             <button
               onClick={() => setShowStats(!showStats)}
               className="w-full px-3 py-1 bg-amber-900/40 hover:bg-amber-800/60 text-amber-300 rounded-lg transition-colors text-sm"
@@ -153,11 +173,12 @@ const Home: FC = () => {
           </div>
         </div>
 
-        {/* Statistics Panel */}
+        {/* Statistics Panel, conditionally rendered based on `showStats` state. */}
         {showStats && (
           <div className="bg-slate-800 p-6 rounded-xl shadow-md border border-slate-700">
             <h3 className="text-lg font-semibold mb-4 text-gray-100">Algorithmic Analysis</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Display key statistics from the `stats` object. */}
               <div className="text-center p-3 bg-cyan-900/40 rounded-lg">
                 <div className="text-2xl font-bold text-cyan-300">{stats.totalItems}</div>
                 <div className="text-sm text-gray-400">Total Tasks</div>
@@ -184,18 +205,22 @@ const Home: FC = () => {
           </div>
         )}
 
-        {/* Main Timeline (Desktop) */}
+        {/* Main Timeline (Desktop View) */}
+        {/* The timeline is hidden on mobile devices. */}
         <div className='w-full overflow-x-auto hidden md:block'>
           <div
             ref={timelineRef}
             className="relative bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700"
             style={{
+              // Dynamically sets the timeline's width and height based on data and zoom.
               width: `${(totalDays * dayWidth * zoomLevel)}px`,
               minHeight: `${lanes.length * 60 + 100}px`
             }}
-            onDrop={(e) => handleDrop(e, timelineRef)}
+            // Event handlers for drag and drop functionality.
+            onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, timelineRef)}
             onDragOver={(e) => e.preventDefault()}
           >
+            {/* Timeline Header with Date Labels */}
             <div className="absolute top-0 left-0 w-full h-12 border-b border-slate-700 bg-slate-900">
               {dateLabels.map((label, i) => (
                 <div
@@ -208,7 +233,8 @@ const Home: FC = () => {
               ))}
             </div>
 
-            {/* Playback indicator line */}
+            {/* Playback Indicator Line */}
+            {/* The line shows the current day during playback. */}
             {(isPlaying || currentDay > 0) && (
               <div
                 className="absolute top-12 bottom-0 w-0.5 bg-rose-500 opacity-70 z-20 transition-all duration-100"
@@ -216,6 +242,7 @@ const Home: FC = () => {
               />
             )}
 
+            {/* Timeline Lanes and Items */}
             <div className="relative mt-12 space-y-3">
               {lanes.map((lane, laneIndex) => (
                 <div
@@ -233,16 +260,19 @@ const Home: FC = () => {
                           key={item.id}
                           className={`absolute h-10 flex items-center px-3 rounded-lg cursor-pointer shadow-sm transition-all duration-200 text-white text-sm font-medium z-10 ${getPriorityColor(item.priority)} ${isActive ? 'ring-2 ring-cyan-400 shadow-lg scale-105' : ''}`}
                           style={{
+                            // Sets position and width of each item dynamically.
                             left: `${item.left}px`,
                             width: `${item.width}px`,
                             top: '1px',
                           }}
+                          // Enables dragging and sets up event handlers for interaction.
                           draggable
                           onDragStart={(e) => handleDragStart(e, item.id)}
                           onDoubleClick={() => setEditingItemId(item.id)}
                           onMouseEnter={(e) => handleHover(item as ItemWithVisualProps, e)}
                           onMouseLeave={handleHoverEnd}
                         >
+                          {/* Conditionally renders an input field for editing the item's name. */}
                           {editingItemId === item.id ? (
                             <input
                               type="text"
@@ -269,7 +299,8 @@ const Home: FC = () => {
               ))}
             </div>
 
-            {/* Tooltip for displaying detailed item information on hover */}
+            {/* Tooltip */}
+            {/* Renders a tooltip with detailed item info on hover. */}
             {hoveredItem && (
               <div
                 className="fixed bg-slate-700 text-gray-200 text-xs p-2 rounded-lg shadow-lg z-50 pointer-events-none"
@@ -286,10 +317,12 @@ const Home: FC = () => {
         </div>
 
         {/* Table View (Mobile) */}
+        {/* The table view is only visible on mobile devices. */}
         <div className="md:hidden">
           <div className="bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700">
             <h2 className="text-lg font-bold text-gray-100 mb-4">Task List</h2>
             <div className="overflow-x-auto">
+              {/* A simple table to display tasks on smaller screens. */}
               <table className="w-full text-xs text-left text-gray-400 min-w-[500px]">
                 <thead className="text-xs text-gray-200 uppercase bg-slate-900">
                   <tr>
@@ -311,6 +344,7 @@ const Home: FC = () => {
                   {filteredItems.map(item => (
                     <tr key={item.id} className="bg-slate-800 border-b border-slate-700">
                       <th scope="row" className="px-3 py-2 font-medium text-gray-100 whitespace-nowrap">
+                        {/* Input field to edit task name in the table view. */}
                         <input
                           type="text"
                           value={item.name}
@@ -324,6 +358,7 @@ const Home: FC = () => {
                         </span>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
+                        {/* Input field to edit the start date. */}
                         <input
                           type="date"
                           value={item.start}
@@ -332,6 +367,7 @@ const Home: FC = () => {
                         />
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
+                        {/* Input field to edit the end date. */}
                         <input
                           type="date"
                           value={item.end}

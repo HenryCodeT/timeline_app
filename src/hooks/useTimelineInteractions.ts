@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import React from 'react';
 import TimelineItem from '@/interfaces/TimelineItem';
 import ItemWithVisualProps from '@/interfaces/ItemWithVisualProps';
 
@@ -9,6 +10,7 @@ interface UseTimelineInteractionsProps {
   dayWidth: number;
 }
 
+// ⚠️ MODIFICATION HERE: Change the type of timelineRef to include null
 interface UseTimelineInteractionsReturn {
   editingItemId: number | null;
   setEditingItemId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -17,7 +19,7 @@ interface UseTimelineInteractionsReturn {
   handleNameChange: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void;
   handleDateChange: (e: React.ChangeEvent<HTMLInputElement>, id: number, dateType: 'start' | 'end') => void;
   handleDragStart: (e: React.DragEvent<HTMLDivElement>, id: number) => void;
-  handleDrop: (e: React.DragEvent<HTMLDivElement>, timelineRef: React.RefObject<HTMLDivElement>) => void;
+  handleDrop: (e: React.DragEvent<HTMLDivElement>, timelineRef: React.RefObject<HTMLDivElement | null>) => void;
   handleHover: (item: ItemWithVisualProps, e: React.MouseEvent<HTMLDivElement>) => void;
   handleHoverEnd: () => void;
 }
@@ -50,7 +52,8 @@ export const useTimelineInteractions = ({ setItems, timelineStartDate, zoomLevel
     e.dataTransfer.effectAllowed = "move";
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, timelineRef: React.RefObject<HTMLDivElement>) => {
+  // ⚠️ MODIFICATION HERE: Change the parameter type to accept null
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, timelineRef: React.RefObject<HTMLDivElement | null>) => {
     e.preventDefault();
     if (!timelineRef.current) return;
 
